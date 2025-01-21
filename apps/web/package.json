@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@prime-admin/pro-layout": "workspace:*",
+    "@prime-admin/pro-table": "workspace:*",
     "@primevue/themes": "^4.2.5",
+    "@tanstack/vue-table": "^8.20.5",
     "@vueuse/core": "^12.4.0",
     "lucide-vue-next": "^0.473.0",
     "primeicons": "^7.0.0",

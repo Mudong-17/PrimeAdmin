@@ -75,6 +75,8 @@ export interface ProLayoutProps {
   breakpoint?: number;
 
   footerRender?: WithFalse<() => JSX.Element> | false;
+
+  whiteList?: string[];
 }
 
 export type ProLayout = DefineComponent<ProLayoutProps>;

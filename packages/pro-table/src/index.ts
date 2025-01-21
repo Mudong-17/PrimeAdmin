@@ -1,2 +1,2 @@
-export { default as ProLayout } from "./ProTable";
-export type { ProLayoutProps } from "./ProTable/types";
+export { default as ProTable } from "./ProTable";
+// export type { ProLayoutProps } from "./ProTable/types";

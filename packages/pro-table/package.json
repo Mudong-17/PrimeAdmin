@@ -24,6 +24,7 @@
     "@rsbuild/plugin-vue": "^1.0.5",
     "@rsbuild/plugin-vue-jsx": "^1.1.0",
     "@rslib/core": "^0.3.2",
+    "@tanstack/vue-table": "^8.20.5",
     "@types/node": "^22.8.1",
     "@vueuse/core": "^12.4.0",
     "lucide-vue-next": "^0.473.0",
@@ -36,12 +37,18 @@
   },
   "peerDependencies": {
     "@primevue/themes": "^4.2.5",
+    "@tanstack/vue-table": "^8.20.5",
+    "@vueuse/core": "^12.4.0",
     "lucide-vue-next": "^0.473.0",
     "primevue": "^4.2.5",
     "tailwindcss-primeui": "^0.4.0",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0",
-    "@vueuse/core": "^12.4.0"
+    "vue-router": "^4.5.0"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0"
+  }
 }
