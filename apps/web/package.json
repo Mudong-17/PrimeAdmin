@@ -1,0 +1,32 @@
+{
+  "name": "web",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "rsbuild build",
+    "check": "biome check --write",
+    "dev": "rsbuild dev --open",
+    "format": "biome format --write",
+    "preview": "rsbuild preview"
+  },
+  "dependencies": {
+    "@prime-admin/pro-layout": "workspace:*",
+    "@primevue/themes": "^4.2.5",
+    "@vueuse/core": "^12.4.0",
+    "lucide-vue-next": "^0.473.0",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.2.5",
+    "tailwindcss-primeui": "^0.4.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.3",
+    "@rsbuild/core": "^1.1.8",
+    "@rsbuild/plugin-babel": "^1.0.3",
+    "@rsbuild/plugin-vue": "^1.0.5",
+    "@rsbuild/plugin-vue-jsx": "^1.1.0",
+    "rsbuild-plugin-tailwindcss": "^0.1.1",
+    "tailwindcss": "^3.4.17"
+  }
+}

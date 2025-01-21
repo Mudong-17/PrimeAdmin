@@ -1,0 +1,47 @@
+{
+  "name": "@prime-admin/pro-layout",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "rslib build",
+    "check": "biome check --write",
+    "dev": "rslib build --watch",
+    "format": "biome format --write"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@primevue/themes": "^4.2.5",
+    "@rsbuild/plugin-babel": "^1.0.3",
+    "@rsbuild/plugin-vue": "^1.0.5",
+    "@rsbuild/plugin-vue-jsx": "^1.1.0",
+    "@rslib/core": "^0.3.2",
+    "@types/node": "^22.8.1",
+    "@vueuse/core": "^12.4.0",
+    "lucide-vue-next": "^0.473.0",
+    "primevue": "^4.2.5",
+    "tailwindcss-primeui": "^0.4.0",
+    "typescript": "^5.7.3",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "vue-tsc": "^2.2.0"
+  },
+  "peerDependencies": {
+    "@primevue/themes": "^4.2.5",
+    "lucide-vue-next": "^0.473.0",
+    "primevue": "^4.2.5",
+    "tailwindcss-primeui": "^0.4.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "@vueuse/core": "^12.4.0"
+  },
+  "private": true
+}
