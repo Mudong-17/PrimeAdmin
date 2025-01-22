@@ -16,7 +16,7 @@ export default defineComponent({
         {props.collapsed ? (
           <></>
         ) : (
-          <span class="font-bold tracking-widest">Vue PrimeAdmin</span>
+          <span class="font-bold tracking-widest">PrimeAdmin</span>
         )}
       </div>
     );

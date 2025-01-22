@@ -14,7 +14,7 @@ PrimeAdmin 是一个基于 Vue 3 和 PrimeVue 的现代管理模板。它旨在�
 - Turbo
 
 ## 计划
-- [ ] ProTable
+- [x] ProTable
 - [ ] ProForm
 - [ ] ProPage 
 - [x] ProLayout

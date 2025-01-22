@@ -1,23 +1,29 @@
-import { defineComponent, h, ref } from "vue";
+import { defineComponent, type PropType, ref } from "vue";
 import {
   FlexRender,
   getCoreRowModel,
   useVueTable,
-  createColumnHelper,
+  getPaginationRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  type ColumnDef,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFacetedMinMaxValues,
 } from "@tanstack/vue-table";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableEmpty,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components";
 import ProTableColumnHeader from "./ProTableColumnHeader";
-import { Badge, Checkbox } from "primevue";
+import ProTablePagination from "./ProTablePagination";
+import ProTableToolbar from "./ProTableToolbar";
+import { Checkbox } from "primevue";
+import { JSX } from "vue/jsx-runtime";
 
 export const labels = [
   {
@@ -72,9 +78,116 @@ export const priorities = [
   },
 ];
 
+export type Column = {
+  key: string;
+  title?: string;
+  sorting?: boolean;
+  filter?:
+    | boolean
+    | {
+        type: "text" | "select";
+        options?: {
+          label: string;
+          value: string;
+        }[];
+      };
+  hiding?: boolean;
+  cell?: (row: any) => JSX.Element;
+};
+
+export type FilterColumn = {
+  key: string;
+  title: string;
+  type: "text" | "select";
+  options?: { label: string; value: any }[];
+};
+
+const transformColumns = (simpleColumns: Column[]): ColumnDef<any>[] => {
+  return simpleColumns.map((col) => {
+    if (col.key === "select") {
+      return {
+        id: "select",
+        header: ({ table }) => (
+          <Checkbox
+            binary
+            modelValue={table.getIsAllPageRowsSelected()}
+            {...{
+              onValueChange: (value: boolean) => {
+                table.toggleAllPageRowsSelected(value);
+              },
+            }}
+          />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            binary
+            modelValue={row.getIsSelected()}
+            {...{
+              onValueChange: (value: boolean) => {
+                row.toggleSelected(value);
+              },
+            }}
+          />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+      };
+    }
+
+    return {
+      id: col.key,
+      accessorKey: col.key,
+      header: ({ column }) => (
+        <ProTableColumnHeader column={column} title={col.title ?? ""} />
+      ),
+      meta: {
+        title: col.title,
+      },
+      cell: col.cell
+        ? ({ row }) => col.cell?.({ row }) // 如果有自定义cell，使用它
+        : ({ getValue }) => getValue(),
+      enableSorting: col.sorting,
+      enableColumnFilter: !!col.filter,
+      enableHiding: col.hiding,
+      filterFn: (row, columnId, filterValue: string[] | string) => {
+        if (!filterValue?.length) return true;
+        const value = row.getValue(columnId) as string;
+        if (Array.isArray(filterValue)) {
+          return filterValue.includes(value);
+        }
+        return value.toLowerCase().includes(filterValue.toLowerCase());
+      },
+    };
+  });
+};
+
+const getFilterColumns = (columns: Column[]): FilterColumn[] => {
+  return columns
+    .filter(
+      (col): col is Column & { filter: NonNullable<Column["filter"]> } =>
+        !!col.filter
+    )
+    .map((col) => ({
+      key: col.key,
+      title: col.title ?? "",
+      type: typeof col.filter === "object" ? col.filter.type : "text",
+      options: typeof col.filter === "object" ? col.filter.options : undefined,
+    }));
+};
+
 export default defineComponent({
   name: "ProTable",
-  setup() {
+  props: {
+    toolbar: {
+      type: Function,
+      default: () => <></>,
+    },
+    columns: {
+      type: Array as PropType<Column[]>,
+      required: true,
+    },
+  },
+  setup(props) {
     let defaultData = [
       {
         id: "TASK-8782",
@@ -860,91 +973,34 @@ export default defineComponent({
       },
     ];
 
-    // defaultData = [];
-
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    const columnHelper = createColumnHelper<any>();
-
-    const columns = [
-      {
-        id: "select",
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        cell: ({ row }: any) => <Checkbox />,
-        enableSorting: false,
-        enableHiding: false,
-      },
-      {
-        accessorKey: "id",
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        header: ({ column }: any) => (
-          <ProTableColumnHeader column={column} title="Task" />
-        ),
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        cell: ({ row }: any) => h("div", { class: "w-20" }, row.getValue("id")),
-        // enableSorting: false,
-        // enableHiding: false,
-      },
-      {
-        accessorKey: "title",
-
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        cell: ({ row }: any) => {
-          const label = labels.find(
-            (label) => label.value === row.original.label
-          );
-
-          return h("div", { class: "flex space-x-2" }, [
-            label ? h(Badge, { variant: "outline" }, () => label.label) : null,
-            h(
-              "span",
-              { class: "max-w-[500px] truncate font-medium" },
-              row.getValue("title")
-            ),
-          ]);
-        },
-      },
-      {
-        accessorKey: "status",
-
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        cell: ({ row }: any) => {
-          const status = statuses.find(
-            (status) => status.value === row.getValue("status")
-          );
-
-          if (!status) return null;
-
-          // return h("div", { class: "flex w-[100px] items-center" }, [
-          //   status.icon &&
-          //     h(status.icon, { class: "mr-2 h-4 w-4 text-muted-foreground" }),
-          //   h("span", status.label),
-          // ]);
-        },
-        // filterFn: (row, id, value) => {
-        //   return value.includes(row.getValue(id));
-        // },
-      },
-      {
-        id: "actions",
-      },
-    ];
+    const columns = transformColumns(props.columns);
+    const filterColumns = getFilterColumns(props.columns);
 
     const data = ref(defaultData);
-
-    const rerender = () => {
-      data.value = defaultData;
-    };
 
     const table = useVueTable({
       get data() {
         return data.value;
       },
       columns,
+      enableRowSelection: true,
+      enableMultiRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
+      getFilteredRowModel: getFilteredRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+      getFacetedRowModel: getFacetedRowModel(),
+      getFacetedUniqueValues: getFacetedUniqueValues(),
+      getFacetedMinMaxValues: getFacetedMinMaxValues(),
     });
 
     return () => (
       <div class="space-y-4">
+        <ProTableToolbar
+          table={table}
+          columns={filterColumns}
+          toolbar={props.toolbar}
+        />
         <div class="rounded-md border">
           <Table>
             <TableHeader>
@@ -985,6 +1041,7 @@ export default defineComponent({
             </TableBody>
           </Table>
         </div>
+        <ProTablePagination table={table} totalRecords={data.value.length} />
       </div>
     );
   },
