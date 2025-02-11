@@ -25,8 +25,8 @@ export default defineComponent({
       <Paginator
         rows={10}
         totalRecords={props.totalRecords}
-        rowsPerPageOptions={[10, 20, 30, 40, 50, 100]}
-        template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown JumpToPageInput"
+        rowsPerPageOptions={[10, 20, 30, 40, 50, 100, 500]}
+        template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
         {...{
           onPage: (e: { page: number; rows: number }) => {
             props.table.setPageIndex(e.page);

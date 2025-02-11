@@ -10,10 +10,7 @@ export default defineComponent({
   },
   setup(props, { slots }) {
     return () => (
-      <table
-        class="w-full caption-bottom text-sm box-border grid"
-        style={{ width: `${props.width && props.width}px` }}
-      >
+      <table class="w-full caption-bottom text-sm box-border grid">
         {slots.default?.()}
       </table>
     );

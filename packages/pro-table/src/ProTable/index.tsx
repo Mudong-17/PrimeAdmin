@@ -5,7 +5,6 @@ import {
   type PropType,
   ref,
   type VNode,
-  watchEffect,
 } from "vue";
 import {
   FlexRender,
@@ -116,7 +115,7 @@ const transformColumns = (simpleColumns: Column[]): ColumnDef<any>[] => {
       enableSorting: col.sorting,
       enableColumnFilter: !!col.filter,
       enableHiding: col.hiding,
-      size: col.size,
+      size: col.size ?? 0,
       enableResizing: col.enableResizing,
       filterFn: (row, columnId, filterValue: string[] | string) => {
         if (!filterValue?.length) return true;
@@ -160,6 +159,7 @@ const getCommonPinningStyles = (column: any): CSSProperties => {
     isPinned === "left" && column.getIsLastColumn("left");
   const isFirstRightPinnedColumn =
     isPinned === "right" && column.getIsFirstColumn("right");
+
   return {
     boxShadow: isLastLeftPinnedColumn
       ? "-4px 0 4px -4px gray inset"
@@ -170,7 +170,9 @@ const getCommonPinningStyles = (column: any): CSSProperties => {
     right: isPinned === "right" ? `${column.getAfter("right")}px` : undefined,
     opacity: isPinned ? 0.95 : 1,
     position: isPinned ? "sticky" : "relative",
-    width: `${column.getSize()}px`,
+    width: column.getSize() !== 0 ? `${column.getSize()}px` : "100%",
+    minWidth: column.getSize() !== 0 ? `${column.getSize()}px` : undefined,
+    maxWidth: column.getSize() !== 0 ? `${column.getSize()}px` : undefined,
     zIndex: isPinned ? 1 : 0,
   };
 };
@@ -220,6 +222,10 @@ export default defineComponent({
           left: getPinLeftColumns(props.columns),
           right: getPinRightColumns(props.columns),
         },
+      },
+      defaultColumn: {
+        minSize: 0,
+        size: 0,
       },
       get data() {
         return dataSource.value;
@@ -284,14 +290,13 @@ export default defineComponent({
           class="rounded-md border box-border flex-1 overflow-y-auto"
           ref={tableContainerRef}
         >
-          <Table width={table.getTotalSize()}>
+          <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow class="flex w-full" key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead
                       key={header.id}
-                      size={header.getSize()}
                       style={getCommonPinningStyles(header.column)}
                     >
                       <div class="flex items-center gap-2 justify-between box-border">
@@ -312,58 +317,29 @@ export default defineComponent({
               ))}
             </TableHeader>
             <TableBody height={totalSize.value}>
-              {virtualRows.value.map((vRow) => {
-                console.log(vRow);
-                return (
-                  <TableRow
-                    key={rows.value[vRow.index].id}
-                    class="flex absolute w-full"
-                    index={vRow.index}
-                    style={{
-                      transform: `translateY(${vRow.start}px)`,
-                    }}
-                    measureElement={measureElement}
-                  >
-                    {rows.value[vRow.index].getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        style={getCommonPinningStyles(cell.column)}
-                      >
-                        <FlexRender
-                          render={cell.column.columnDef.cell}
-                          props={cell.getContext()}
-                        />
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                );
-              })}
-              {/* {table.getRowModel().rows?.length ? (
-                virtualRows.value.map((row) => {
-                  console.log(virtualRows.value);
-                  return (
-                    <TableRow key={rows.value[row.index].id}>
-                      {rows.value[row.index].getVisibleCells().map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          style={getCommonPinningStyles(cell.column)}
-                        >
-                          <FlexRender
-                            render={cell.column.columnDef.cell}
-                            props={cell.getContext()}
-                          />
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })
-              ) : (
-                <TableRow>
-                  <TableCell class="h-24 text-center" colspan={columns.length}>
-                    No data
-                  </TableCell>
+              {virtualRows.value.map((vRow) => (
+                <TableRow
+                  key={rows.value[vRow.index].id}
+                  class="flex absolute w-full"
+                  index={vRow.index}
+                  style={{
+                    transform: `translateY(${vRow.start}px)`,
+                  }}
+                  measureElement={measureElement}
+                >
+                  {rows.value[vRow.index].getVisibleCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      style={getCommonPinningStyles(cell.column)}
+                    >
+                      <FlexRender
+                        render={cell.column.columnDef.cell}
+                        props={cell.getContext()}
+                      />
+                    </TableCell>
+                  ))}
                 </TableRow>
-              )} */}
+              ))}
             </TableBody>
           </Table>
         </div>

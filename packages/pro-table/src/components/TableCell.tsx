@@ -19,10 +19,7 @@ export default defineComponent({
   setup(props, { slots }) {
     return () => (
       <td
-        class={[
-          "[&:has([role=checkbox])]:pr-0 text-color bg-white box-border !p-4 grid",
-          props.class,
-        ]}
+        class={["text-color bg-white box-border !p-4 grid", props.class]}
         style={{
           ...props.style,
         }}
