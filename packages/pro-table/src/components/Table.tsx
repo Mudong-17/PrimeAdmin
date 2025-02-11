@@ -10,7 +10,7 @@ export default defineComponent({
   },
   setup(props, { slots }) {
     return () => (
-      <table class="w-full caption-bottom text-sm box-border grid">
+      <table class="caption-bottom text-sm box-border grid">
         {slots.default?.()}
       </table>
     );

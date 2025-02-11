@@ -7,4 +7,5 @@ export type FormSchema = {
   validators?:
     | FieldValidators<Record<string, any>, string, undefined, undefined, any>
     | undefined;
+  fieldProps?: Record<string, any>;
 };

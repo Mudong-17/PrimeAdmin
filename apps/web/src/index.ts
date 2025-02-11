@@ -7,6 +7,11 @@ import Aura from "@primevue/themes/aura";
 import { definePreset } from "@primevue/themes";
 import "primeicons/primeicons.css";
 import Tooltip from "primevue/tooltip";
+import zhCN from "./locale/zh-CN.json";
+
+const locale = {
+  ...zhCN,
+};
 
 const app = createApp(App);
 
@@ -681,6 +686,7 @@ app.use(PrimeVue, {
   theme: {
     preset: MyPreset,
   },
+  locale: locale["zh-CN"],
 });
 
 app.mount("#root");

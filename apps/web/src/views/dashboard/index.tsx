@@ -30,15 +30,42 @@ export default defineComponent({
         sorting: false,
         filter: false,
         export: false,
+        size: 180,
       },
       {
         key: "title",
         title: "标题",
         filter: { type: "text" },
+        size: 180,
+      },
+      {
+        key: "title1",
+        title: "标题",
+        filter: { type: "text" },
+        size: 180,
+      },
+      {
+        key: "title2",
+        title: "标题",
+        filter: { type: "text" },
+        size: 180,
+      },
+      {
+        key: "title3",
+        title: "标题",
+        filter: { type: "text" },
+        size: 180,
+      },
+      {
+        key: "title4",
+        title: "标题",
+        filter: { type: "text" },
+        size: 180,
       },
       {
         key: "status",
         title: "状态",
+        size: 180,
         filter: {
           type: "select",
           options: [
@@ -54,6 +81,7 @@ export default defineComponent({
         key: "actions",
         title: "操作",
         sorting: false,
+        size: 200,
         cell: ({ row }) => {
           return (
             <Button
