@@ -16,6 +16,7 @@
     "@primevue/themes": "^4.2.5",
     "@tanstack/vue-form": "^0.41.3",
     "@tanstack/vue-table": "^8.20.5",
+    "@tanstack/vue-virtual": "^3.13.0",
     "@tanstack/zod-form-adapter": "^0.41.3",
     "@vueuse/core": "^12.4.0",
     "lucide-vue-next": "^0.473.0",

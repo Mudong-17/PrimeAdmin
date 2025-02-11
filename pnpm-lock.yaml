@@ -41,6 +41,9 @@ importers:
       '@tanstack/vue-table':
         specifier: ^8.20.5
         version: 8.20.5(vue@3.5.13(typescript@5.7.3))
+      '@tanstack/vue-virtual':
+        specifier: ^3.13.0
+        version: 3.13.0(vue@3.5.13(typescript@5.7.3))
       '@tanstack/zod-form-adapter':
         specifier: ^0.41.3
         version: 0.41.3(zod@3.24.1)
@@ -208,6 +211,9 @@ importers:
 
   packages/pro-table:
     dependencies:
+      '@tanstack/vue-virtual':
+        specifier: ^3.13.0
+        version: 3.13.0(vue@3.5.13(typescript@5.7.3))
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -751,6 +757,9 @@ packages:
     resolution: {integrity: sha512-P9dF7XbibHph2PFRz8gfBKEXEY/HJPOhym8CHmjF8y3q5mWpKx9xtZapXQUWCgkqvsK0R46Azuz+VaxD4Xl+Tg==}
     engines: {node: '>=12'}
 
+  '@tanstack/virtual-core@3.13.0':
+    resolution: {integrity: sha512-NBKJP3OIdmZY3COJdWkSonr50FMVIi+aj5ZJ7hI/DTpEKg2RMfo/KvP8A3B/zOSpMgIe52B5E2yn7rryULzA6g==}
+
   '@tanstack/vue-form@0.41.3':
     resolution: {integrity: sha512-NMsMBmEifBU/zfuRqxQKWkxdpPS173xsHvRT3Fl8lAMUVEaEgWRkZl5JYOHIAINU0Bs342RMLa/Gz+XjluBcbw==}
     peerDependencies:
@@ -770,6 +779,11 @@ packages:
     engines: {node: '>=12'}
     peerDependencies:
       vue: '>=3.2'
+
+  '@tanstack/vue-virtual@3.13.0':
+    resolution: {integrity: sha512-EPgcTc41KGJAK2N2Ux2PeUnG3cPpdkldTib05nwq+0zdS2Ihpbq8BsWXz/eXPyNc5noDBh1GBgAe36yMYiW6WA==}
+    peerDependencies:
+      vue: ^2.7.0 || ^3.0.0
 
   '@tanstack/zod-form-adapter@0.41.3':
     resolution: {integrity: sha512-7BUTtRmmLfwWzBnlD0+wWqtlbqU5oAIjo4QK85iAyjilkz1HfVDXU7DyYiGRvU3+/cpEQYytKGGKB5oWNh5t0g==}
@@ -2717,6 +2731,8 @@ snapshots:
 
   '@tanstack/table-core@8.20.5': {}
 
+  '@tanstack/virtual-core@3.13.0': {}
+
   '@tanstack/vue-form@0.41.3(vue@3.5.13(typescript@5.7.3))':
     dependencies:
       '@tanstack/form-core': 0.41.3
@@ -2734,6 +2750,11 @@ snapshots:
   '@tanstack/vue-table@8.20.5(vue@3.5.13(typescript@5.7.3))':
     dependencies:
       '@tanstack/table-core': 8.20.5
+      vue: 3.5.13(typescript@5.7.3)
+
+  '@tanstack/vue-virtual@3.13.0(vue@3.5.13(typescript@5.7.3))':
+    dependencies:
+      '@tanstack/virtual-core': 3.13.0
       vue: 3.5.13(typescript@5.7.3)
 
   '@tanstack/zod-form-adapter@0.41.3(zod@3.24.1)':

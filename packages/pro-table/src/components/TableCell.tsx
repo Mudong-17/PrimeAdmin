@@ -20,7 +20,7 @@ export default defineComponent({
     return () => (
       <td
         class={[
-          "align-middle [&:has([role=checkbox])]:pr-0 text-color bg-white box-border  !p-4",
+          "[&:has([role=checkbox])]:pr-0 text-color bg-white box-border !p-4 grid",
           props.class,
         ]}
         style={{
@@ -28,7 +28,7 @@ export default defineComponent({
         }}
         colspan={props.colspan}
       >
-        {slots.default?.()}
+        <span class="self-center line-clamp-3">{slots.default?.()}</span>
       </td>
     );
   },

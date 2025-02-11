@@ -1,9 +1,11 @@
 import {
+  computed,
   type CSSProperties,
   defineComponent,
   type PropType,
   ref,
   type VNode,
+  watchEffect,
 } from "vue";
 import {
   FlexRender,
@@ -30,6 +32,7 @@ import ProTablePagination from "./ProTablePagination";
 import ProTableToolbar from "./ProTableToolbar";
 import { Checkbox } from "primevue";
 import ProTableFilter from "./ProTableFilter";
+import { useVirtualizer } from "@tanstack/vue-virtual";
 
 export type Column = {
   key: string;
@@ -146,6 +149,7 @@ const getPinLeftColumns = (columns: Column[]): string[] => {
     .filter((col) => col.pin === "left" || col.pin === true)
     .map((col) => col.key);
 };
+
 const getPinRightColumns = (columns: Column[]): string[] => {
   return columns.filter((col) => col.pin === "right").map((col) => col.key);
 };
@@ -156,7 +160,6 @@ const getCommonPinningStyles = (column: any): CSSProperties => {
     isPinned === "left" && column.getIsLastColumn("left");
   const isFirstRightPinnedColumn =
     isPinned === "right" && column.getIsFirstColumn("right");
-
   return {
     boxShadow: isLastLeftPinnedColumn
       ? "-4px 0 4px -4px gray inset"
@@ -167,7 +170,7 @@ const getCommonPinningStyles = (column: any): CSSProperties => {
     right: isPinned === "right" ? `${column.getAfter("right")}px` : undefined,
     opacity: isPinned ? 0.95 : 1,
     position: isPinned ? "sticky" : "relative",
-    width: column.getSize(),
+    width: `${column.getSize()}px`,
     zIndex: isPinned ? 1 : 0,
   };
 };
@@ -234,12 +237,40 @@ export default defineComponent({
       getFacetedMinMaxValues: getFacetedMinMaxValues(),
     });
 
+    const rows = computed(() => table.getRowModel().rows);
+
+    const tableContainerRef = ref<HTMLDivElement | null>(null);
+
+    const rowVirtualizerOptions = computed(() => {
+      return {
+        count: rows.value.length,
+        estimateSize: () => 67, //estimate row height for accurate scrollbar dragging
+        getScrollElement: () => tableContainerRef.value,
+        overscan: 5,
+      };
+    });
+
+    const rowVirtualizer = useVirtualizer(rowVirtualizerOptions);
+
+    const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems());
+    const totalSize = computed(() => rowVirtualizer.value.getTotalSize());
+
+    const measureElement = (el?: Element) => {
+      if (!el) {
+        return;
+      }
+
+      rowVirtualizer.value.measureElement(el);
+
+      return undefined;
+    };
+
     const handleExport = () => {
       emit("export");
     };
 
     return () => (
-      <div class="space-y-4 box-border">
+      <div class="box-border flex flex-col gap-4 h-full">
         <ProTableToolbar
           title={props.title}
           titleRender={props.titleRender}
@@ -249,7 +280,10 @@ export default defineComponent({
           toolbar={props.toolbar}
           onExport={handleExport}
         />
-        <div class="rounded-md border box-border">
+        <div
+          class="rounded-md border box-border flex-1 overflow-y-auto"
+          ref={tableContainerRef}
+        >
           <Table width={table.getTotalSize()}>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -260,7 +294,7 @@ export default defineComponent({
                       size={header.getSize()}
                       style={getCommonPinningStyles(header.column)}
                     >
-                      <div class="flex items-center gap-2 justify-between  box-border">
+                      <div class="flex items-center gap-2 justify-between box-border">
                         <FlexRender
                           render={header.column.columnDef.header}
                           props={header.getContext()}
@@ -277,11 +311,20 @@ export default defineComponent({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
+            <TableBody height={totalSize.value}>
+              {virtualRows.value.map((vRow) => {
+                console.log(vRow);
+                return (
+                  <TableRow
+                    key={rows.value[vRow.index].id}
+                    class="flex absolute w-full"
+                    index={vRow.index}
+                    style={{
+                      transform: `translateY(${vRow.start}px)`,
+                    }}
+                    measureElement={measureElement}
+                  >
+                    {rows.value[vRow.index].getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
                         style={getCommonPinningStyles(cell.column)}
@@ -293,14 +336,34 @@ export default defineComponent({
                       </TableCell>
                     ))}
                   </TableRow>
-                ))
+                );
+              })}
+              {/* {table.getRowModel().rows?.length ? (
+                virtualRows.value.map((row) => {
+                  console.log(virtualRows.value);
+                  return (
+                    <TableRow key={rows.value[row.index].id}>
+                      {rows.value[row.index].getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          style={getCommonPinningStyles(cell.column)}
+                        >
+                          <FlexRender
+                            render={cell.column.columnDef.cell}
+                            props={cell.getContext()}
+                          />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                })
               ) : (
                 <TableRow>
                   <TableCell class="h-24 text-center" colspan={columns.length}>
                     No data
                   </TableCell>
                 </TableRow>
-              )}
+              )} */}
             </TableBody>
           </Table>
         </div>
