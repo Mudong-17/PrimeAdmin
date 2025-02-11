@@ -1,13 +1,12 @@
 import type { Table } from "@tanstack/vue-table";
 import { TableProperties } from "lucide-vue-next";
-import { Checkbox, Popover, TieredMenu } from "primevue";
+import { Checkbox, Popover } from "primevue";
 import { computed, defineComponent, type PropType, ref } from "vue";
 
 export default defineComponent({
   name: "ProTableViewOptions",
   props: {
     table: {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       type: Object as PropType<Table<any>>,
       required: true,
     },
@@ -24,14 +23,14 @@ export default defineComponent({
         )
     );
 
-    console.log(columns.value);
     return () => (
       <div>
         <div
-          class="w-10 h-10 flex items-center justify-center cursor-pointer"
+          class="w-8 h-8 flex items-center justify-center cursor-pointer"
           onClick={(e) => op.value.toggle(e)}
+          v-tooltip="显示/隐藏列"
         >
-          <TableProperties class="text-muted-color" size={24} />
+          <TableProperties class="text-muted-color" size={18} />
         </div>
 
         <Popover ref={op} appendTo="body">

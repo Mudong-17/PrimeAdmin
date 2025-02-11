@@ -18,7 +18,7 @@ export type MenuDataItem = {
   /** @name 在菜单中隐藏自己和子节点 */
   hideInMenu?: boolean;
   /** @name 菜单的icon */
-  icon?: JSX.Element;
+  icon?: JSX.Element | string;
   /** @name 菜单的名字 */
   name?: string;
   /** @name 用于标定选中的值，默认是 path */

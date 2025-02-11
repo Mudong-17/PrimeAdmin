@@ -1,4 +1,4 @@
-import { computed, defineComponent, ref, type PropType } from "vue";
+import { computed, defineComponent, ref, VNode, type PropType } from "vue";
 import type { Column } from "@tanstack/vue-table";
 import { TieredMenu } from "primevue";
 import {
@@ -7,25 +7,41 @@ import {
   ChevronsUpDown,
   EyeOff,
 } from "lucide-vue-next";
-import { JSX } from "vue/jsx-runtime";
 
 interface ProTableColumnHeaderProps {
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   column: Column<any, any>;
   title: string;
+  filter?:
+    | boolean
+    | {
+        type: "text" | "select";
+        options?: {
+          label: string;
+          value: string;
+        }[];
+      };
 }
 
 export default defineComponent<ProTableColumnHeaderProps>({
   name: "ProTableColumnHeader",
   props: {
     column: {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       type: Object as PropType<Column<any, any>>,
       required: true,
     },
     title: {
       type: String,
       required: true,
+    },
+    filter: {
+      type: [Boolean, Object] as PropType<
+        | boolean
+        | {
+            type: "text" | "select";
+            options?: { label: string; value: string }[];
+          }
+      >,
+      default: false,
     },
   },
   setup(props) {
@@ -52,15 +68,14 @@ export default defineComponent<ProTableColumnHeaderProps>({
     ];
     const menuRef = ref<InstanceType<typeof TieredMenu> | null>(null);
 
-    return () => (
-      <>
-        {props.column.getCanSort() ? (
-          <div class="cursor-pointer">
-            <div
-              class="flex items-center gap-2 w-fit"
-              onClick={(e) => menuRef.value?.toggle(e)}
-            >
-              <span>{props.title}</span>
+    const generateSort = () => {
+      if (props.column.getCanSort()) {
+        return (
+          <div
+            class="flex items-center gap-2 w-fit"
+            onClick={(e) => menuRef.value?.toggle(e)}
+          >
+            <span>
               {props.column.getIsSorted() === "asc" && (
                 <ArrowUpNarrowWide size={16} />
               )}
@@ -71,16 +86,10 @@ export default defineComponent<ProTableColumnHeaderProps>({
                 props.column.getIsSorted() !== "asc" && (
                   <ChevronsUpDown size={16} />
                 )}
-            </div>
-
-            {/* biome-ignore lint/suspicious/noExplicitAny: <explanation> */}
+            </span>
             <TieredMenu ref={menuRef} model={menus as any} popup>
               {{
-                itemicon: ({
-                  item,
-                }: {
-                  item: { icon: string | JSX.Element };
-                }) => {
+                itemicon: ({ item }: { item: { icon: string | VNode } }) => {
                   if (typeof item.icon === "string") {
                     return <i class={item.icon} />;
                   }
@@ -89,10 +98,17 @@ export default defineComponent<ProTableColumnHeaderProps>({
               }}
             </TieredMenu>
           </div>
-        ) : (
-          <div>{props.title}</div>
-        )}
-      </>
+        );
+      }
+    };
+
+    return () => (
+      <div class="cursor-pointer flex items-center gap-2">
+        <div class="flex items-center gap-2">
+          <span>{props.title}</span>
+          {generateSort()}
+        </div>
+      </div>
     );
   },
 });

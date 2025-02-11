@@ -1,19 +1,37 @@
 import type { Table } from "@tanstack/vue-table";
-import { FloatLabel, InputText, MultiSelect } from "primevue";
-import { defineComponent, type PropType } from "vue";
+import { defineComponent, type VNode, type PropType } from "vue";
 import type { FilterColumn } from "./index";
 import ProTableViewOptions from "./ProTableViewOptions";
-import { RotateCcw } from "lucide-vue-next";
+import { Download } from "lucide-vue-next";
 
 export default defineComponent({
   name: "ProTableToolbar",
   props: {
+    title: {
+      type: String,
+      default: "",
+    },
+    titleRender: {
+      type: [Function, null, Boolean] as PropType<(() => VNode) | null | false>,
+      default: null,
+    },
+    tools: {
+      type: Object as PropType<{
+        export: boolean;
+      }>,
+      default: () => ({
+        export: true,
+      }),
+    },
+    filter: {
+      type: Boolean,
+      default: true,
+    },
     toolbar: {
       type: Function,
       default: () => <></>,
     },
     table: {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       type: Object as PropType<Table<any>>,
       required: true,
     },
@@ -22,81 +40,42 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
-    console.log(props.columns);
-
-    const generateInputFilter = (column: FilterColumn, table: Table<any>) => {
+  emits: ["export"],
+  setup(props, { emit }) {
+    const generateTitle = () => {
+      if (props.titleRender === false) {
+        return null;
+      }
+      if (props.titleRender) {
+        return props.titleRender();
+      }
       return (
-        <FloatLabel variant="on" key={column.key}>
-          <InputText
-            id={column.key}
-            modelValue={
-              (props.table.getColumn(column.key)?.getFilterValue() as string) ??
-              ""
-            }
-            autocomplete="off"
-            {...{
-              onValueChange: (value: string) => {
-                props.table.getColumn(column.key)?.setFilterValue(value);
-              },
-            }}
-          />
-          <label for={column.key}>{column.title}</label>
-        </FloatLabel>
-      );
-    };
-
-    const generateSelectFilter = (column: FilterColumn, table: Table<any>) => {
-      return (
-        <FloatLabel variant="on" key={column.key}>
-          <MultiSelect
-            class="w-56"
-            filter
-            emptyFilterMessage="未找到结果"
-            options={column.options}
-            optionLabel="label"
-            optionValue="value"
-            display="chip"
-            showToggleAll={false}
-            modelValue={
-              (props.table.getColumn(column.key)?.getFilterValue() as string) ??
-              ""
-            }
-            {...{
-              onValueChange: (value: string) => {
-                const filterValues = Array.from(value);
-                props.table
-                  .getColumn(column.key)
-                  ?.setFilterValue(
-                    filterValues.length ? filterValues : undefined
-                  );
-              },
-            }}
-          />
-          <label for={column.key}>{column.title}</label>
-        </FloatLabel>
+        <div class="flex items-center font-semibold tracking-widest">
+          {props.title}
+        </div>
       );
     };
 
     return () => (
-      <div class="flex items-center justify-between">
+      <div class="grid grid-cols-[minmax(0,_1fr)_auto] gap-4">
+        <div class="flex items-center">{generateTitle()}</div>
         <div class="flex items-center gap-2">
-          {props.columns.map((column) => {
-            if (column.type === "select") {
-              return generateSelectFilter(column, props.table);
-            }
-            return generateInputFilter(column, props.table);
-          })}
-        </div>
-        <div class="flex items-center">
-          <div class="flex items-center gap-2">{props.toolbar()}</div>
-
-          <div class="flex items-center">
+          <div class="flex items-center shrink-0">
             <ProTableViewOptions table={props.table} />
-            <div class="w-10 h-10 flex items-center justify-center cursor-pointer">
-              <RotateCcw class="text-muted-color" size={24} />
-            </div>
+            {props.tools.export && (
+              <div
+                class="w-8 h-8 flex items-center justify-center cursor-pointer"
+                v-tooltip="导出"
+                onClick={() => {
+                  emit("export");
+                }}
+              >
+                <Download class="text-muted-color" size={18} />
+              </div>
+            )}
           </div>
+
+          <div class="flex items-center gap-2 shrink-0">{props.toolbar()}</div>
         </div>
       </div>
     );

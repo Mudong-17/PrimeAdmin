@@ -1,9 +1,8 @@
-import { defineComponent } from "vue";
-import type { JSX } from "vue/jsx-runtime";
+import { defineComponent, type VNode } from "vue";
 import { ProgressSpinner } from "primevue";
 
 interface ContentProps {
-  content: JSX.Element;
+  content: VNode;
   loading?: boolean;
 }
 

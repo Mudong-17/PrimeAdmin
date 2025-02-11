@@ -1,13 +1,11 @@
 import { defineComponent, type PropType } from "vue";
 import type { Table } from "@tanstack/vue-table";
 import { Button, Paginator } from "primevue";
-import { table } from "console";
 
 export default defineComponent({
   name: "ProTablePagination",
   props: {
     table: {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       type: Object as PropType<Table<any>>,
       required: true,
     },

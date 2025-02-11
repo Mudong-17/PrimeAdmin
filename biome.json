@@ -27,6 +27,9 @@
       "recommended": true,
       "a11y": {
         "useKeyWithClickEvents": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
       }
     }
   }

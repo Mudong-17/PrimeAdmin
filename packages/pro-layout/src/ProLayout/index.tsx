@@ -132,7 +132,7 @@ export default defineComponent<ProLayoutProps>({
       menus: typeof props.menus
     ): boolean => {
       // 首先检查是否在白名单中
-      if (props.whiteList.includes(path)) {
+      if (props.whiteList?.includes(path)) {
         return true;
       }
 
@@ -178,7 +178,7 @@ export default defineComponent<ProLayoutProps>({
                 activePath={layoutState.currentPath}
                 isMobile={layoutState.isMobile}
               />
-              <div class="flex-1 flex flex-col bg-emphasis">
+              <div class="flex-1 flex flex-col bg-emphasis overflow-hidden">
                 <Header
                   collapsed={layoutState.collapsed}
                   onCollapsed={toggleCollapsed}
