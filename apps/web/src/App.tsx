@@ -23,6 +23,11 @@ export default defineComponent({
         path: "/dashboard",
       },
       {
+        name: "关于",
+        icon: "pi pi-info-circle",
+        path: "/about",
+      },
+      {
         name: "系统管理",
         icon: "pi pi-cog",
         children: [

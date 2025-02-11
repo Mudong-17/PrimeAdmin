@@ -38,6 +38,7 @@ export type Column = {
   size?: number;
   pin?: "left" | "right" | true;
   enableResizing?: boolean;
+  export?: boolean;
   filter?:
     | boolean
     | {
@@ -194,10 +195,6 @@ export default defineComponent({
       type: Array as PropType<Record<string, unknown>[]>,
       default: () => [],
     },
-    filter: {
-      type: Boolean,
-      default: true,
-    },
     tools: {
       type: Object as PropType<{
         export: boolean;
@@ -207,7 +204,7 @@ export default defineComponent({
       }),
     },
   },
-  emits: ["export"],
+  emits: ["export", "changePage"],
   setup(props, { emit }) {
     const columns = transformColumns(props.columns);
     const filterColumns = getFilterColumns(props.columns);
@@ -247,7 +244,6 @@ export default defineComponent({
           title={props.title}
           titleRender={props.titleRender}
           tools={props.tools}
-          filter={props.filter}
           table={table}
           columns={filterColumns}
           toolbar={props.toolbar}
@@ -311,6 +307,12 @@ export default defineComponent({
         <ProTablePagination
           table={table}
           totalRecords={dataSource.value.length}
+          onChange={(e) => {
+            emit("changePage", {
+              page: e.page,
+              pageSize: e.pageSize,
+            });
+          }}
         />
       </div>
     );

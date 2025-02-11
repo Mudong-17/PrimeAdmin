@@ -13,6 +13,12 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    onChange: {
+      type: Function as PropType<
+        (e: { page: number; pageSize: number }) => void
+      >,
+      required: true,
+    },
   },
   setup(props) {
     return () => (
@@ -25,6 +31,10 @@ export default defineComponent({
           onPage: (e: { page: number; rows: number }) => {
             props.table.setPageIndex(e.page);
             props.table.setPageSize(e.rows);
+            props.onChange({
+              page: e.page + 1,
+              pageSize: e.rows,
+            });
           },
         }}
       >

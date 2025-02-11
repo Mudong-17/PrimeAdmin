@@ -1,5 +1,5 @@
 import { defineComponent, ref } from "vue";
-import { ProTable } from "@prime-admin/pro-table";
+import { exportExcel, ProTable } from "@prime-admin/pro-table";
 import { ProSearch } from "@prime-admin/pro-form";
 import type { Column } from "@prime-admin/pro-table";
 import { Button } from "primevue";
@@ -21,6 +21,7 @@ export default defineComponent({
         sorting: false,
         filter: false,
         size: 120,
+        export: false,
       },
       {
         key: "title",
@@ -213,8 +214,13 @@ export default defineComponent({
             title="任务列表"
             columns={columns}
             dataSource={dataSource.value}
-            filter={true}
             toolbar={() => [<Button key="add" label="新增" size="small" />]}
+            onExport={() => {
+              exportExcel(columns, dataSource.value, "任务列表");
+            }}
+            onChangePage={(e) => {
+              console.log(e);
+            }}
           />
         </Block>
       </div>
