@@ -117,6 +117,8 @@ const generateInputFilter = (item: FormSchema, field: any) => {
   );
 };
 
+// 导出组件实例类型
+
 export default defineComponent({
   name: "ProForm",
   props: {
@@ -143,14 +145,30 @@ export default defineComponent({
       type: Function,
       required: false,
     },
+    submitRender: {
+      type: Function,
+      required: false,
+    },
   },
-
-  setup(props) {
+  setup(props, { expose }) {
     const form = useForm({
       defaultValues: props.defaultValues,
-      onSubmit: ({ value }: { value: Record<string, any> }) => {
+      onSubmit: async ({ value }: { value: Record<string, any> }) => {
+        const errors = await form.validateAllFields("submit");
+        if (errors.length > 0) {
+          return;
+        }
         props.onSubmit?.(value);
       },
+    });
+
+    const handleSubmit = () => {
+      console.log("handleSubmit");
+      form.handleSubmit();
+    };
+
+    expose({
+      submit: handleSubmit,
     });
 
     return () => (
@@ -191,28 +209,32 @@ export default defineComponent({
               }}
             </form.Field>
           ))}
-          <div
-            class="flex gap-4 justify-end h-9 items-center self-center"
-            style={{
-              gridColumn: `span ${props.layout?.cols} / span ${props.layout?.cols}`,
-            }}
-          >
-            <Button
-              class="h-full"
-              type="reset"
-              severity="contrast"
-              raised
-              onClick={() => {
-                form.reset();
-                form.handleSubmit();
+          {props.submitRender ? (
+            props.submitRender()
+          ) : (
+            <div
+              class="flex gap-4 justify-end h-9 items-center self-center"
+              style={{
+                gridColumn: `span ${props.layout?.cols} / span ${props.layout?.cols}`,
               }}
             >
-              重置
-            </Button>
-            <Button class="h-full" type="submit" raised>
-              提交
-            </Button>
-          </div>
+              <Button
+                class="h-full"
+                type="reset"
+                severity="contrast"
+                raised
+                onClick={() => {
+                  form.reset();
+                  form.handleSubmit();
+                }}
+              >
+                重置
+              </Button>
+              <Button class="h-full" type="submit" raised>
+                提交
+              </Button>
+            </div>
+          )}
         </div>
       </form>
     );

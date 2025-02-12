@@ -97,7 +97,7 @@ export default defineComponent({
           ))}
           <div class="col-start-5 flex gap-4 justify-end h-9 items-center self-center">
             <Button
-              class="h-full"
+              class="h-full flex-shrink-0"
               type="reset"
               severity="contrast"
               raised
@@ -108,7 +108,7 @@ export default defineComponent({
             >
               重置
             </Button>
-            <Button class="h-full" type="submit" raised>
+            <Button class="h-full flex-shrink-0" type="submit" raised>
               搜索
             </Button>
           </div>

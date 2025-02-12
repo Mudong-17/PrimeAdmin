@@ -4,7 +4,7 @@ import { ProSearch } from "@prime-admin/pro-form";
 import type { Column } from "@prime-admin/pro-table";
 import { Button, Splitter, SplitterPanel } from "primevue";
 import { z } from "zod";
-import { Block } from "@/components";
+import { Block, ProTree } from "@/components";
 
 const generateMockData = (count: number) => {
   const statusList = ["backlog", "todo", "in progress", "done", "canceled"];
@@ -155,15 +155,64 @@ export default defineComponent({
           },
         }}
       >
-        <SplitterPanel size={15} minSize={15} class="pr-4">
-          <Block class="h-full">
-            <h1>123</h1>
+        <SplitterPanel size={20} minSize={20} class="pr-4">
+          <Block class="h-full p-0">
+            <ProTree
+              nodes={[
+                {
+                  key: "0",
+                  label: "Documents",
+                  data: "Documents Folder",
+                  icon: "pi pi-fw pi-inbox",
+                  children: [
+                    {
+                      key: "0-0",
+                      label: "Work",
+                      data: "Work Folder",
+                      icon: "pi pi-fw pi-cog",
+                      children: [
+                        {
+                          key: "0-0-0",
+                          label: "Expenses.doc",
+                          icon: "pi pi-fw pi-file",
+                          data: "Expenses Document",
+                        },
+                        {
+                          key: "0-0-1",
+                          label: "Resume.doc",
+                          icon: "pi pi-fw pi-file",
+                          data: "Resume Document",
+                        },
+                      ],
+                    },
+                    {
+                      key: "0-1",
+                      label: "Home",
+                      data: "Home Folder",
+                      icon: "pi pi-fw pi-home",
+                      children: [
+                        {
+                          key: "0-1-0",
+                          label: "Invoices.txt",
+                          icon: "pi pi-fw pi-file",
+                          data: "Invoices for this month",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ]}
+              onSelected={(node) => {
+                console.log(node);
+              }}
+              tools={() => [<Button size="small" key="12" label="新增" text />]}
+            />
           </Block>
         </SplitterPanel>
         <SplitterPanel
           class="overflow-y-auto h-full rounded-border gap-4 flex flex-col pl-4"
-          size={85}
-          minSize={70}
+          size={75}
+          minSize={75}
         >
           <Block class="flex-shrink-0">
             <ProSearch
